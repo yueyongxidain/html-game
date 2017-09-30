@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HTML5 Canvas推箱子小游</title>
+<style>
+*{
+	margin:0px;
+	padding:0px;
+}
+body{
+}
+.game{
+	width:560px;
+	margin:5px auto;
+}
+</style>
+<script src="js/mapdata100.js"></script>
+</head>
+<body>
+	<div class="game">
+		<canvas id="canvas"></canvas>
+		<input type="button" value="上一关" onClick="before()">
+		<input type="button" value="下一关" onClick="next()">
+		<input type="button" value="重玩本关" onClick="now()">
+		<input type="button" value="游戏说明" onClick="help()">
+        <div id="msg"></div>
+	</div>
+    
+<script src="js/move.js"></script>
+</body>
+</html>
