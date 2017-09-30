@@ -1,0 +1,17 @@
+@charset "utf-8";
+/* CSS Document */
+
+#canvas
+  {
+	  display:block;
+	  border:1px solid #000;
+	  width:600px;
+	  height:600px;
+	  background:#000;
+	  margin:0  auto;
+  }
+ #btn1
+ {
+	 display:block;
+	 margin:0 auto;
+  }
