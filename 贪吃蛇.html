@@ -1,0 +1,296 @@
+ <!DOCTYPE html>
+   <html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>js小游戏之贪吃蛇</title>
+	<style>
+	div
+	{
+		margin:0 auto;
+		text-align:center;
+	}
+	 #mcanvas
+	 {
+		 border:2px solid #0F6;
+		display:block;
+		margin:0 auto;
+	}
+	</style>
+    
+   </head>
+  <body>
+     
+     <div id="instruction">
+     <p style="font-size:18px;color:#03C;">分别由键盘的上下左右来控制蛇的移动方向</p>
+     </div>
+     <div id="main">
+     </div>
+      <script type="text/javascript">
+	    var canvas = document.createElement('canvas'); 
+		canvas.id     = "mcanvas";
+		canvas.width='800';
+		canvas.height='600';
+		document.body.appendChild(canvas);
+        var ctx=canvas.getContext('2d');
+		
+		 var foods
+		 var snakes//放食物和蛇的数组
+		 //初始化
+		 function foodinit(x,y) //x,y代表坐标
+		 {
+			 var object=new Object();
+			 object.x=x;
+			 object.y=y;
+			 ctx.fillStyle='red';
+			 ctx.fillRect(x,y,10,10);
+			 ctx.strokeStyle='#000000';
+			 ctx.strokeRect(x,y,10,10);
+			return object;
+			}
+		//蛇身
+		function snakeinit(x,y)
+		{
+			var object=new Object();
+			object.x=x;
+			object.y=y;
+			ctx.fillStyle='blue';
+			ctx.fillRect(x,y,10,10);
+			ctx.strokeStyle='#000000';
+			ctx.strokeRect(x,y,10,10);
+			return object;
+			}
+			//蛇头
+			function snakeinith(x,y)
+		{
+			var object=new Object();
+			object.x=x;
+			object.y=y;
+			ctx.fillStyle='red';
+			ctx.fillRect(x,y,10,10);
+			ctx.strokeStyle='#000000';
+			ctx.strokeRect(x,y,10,10);
+			return object;
+			}
+		//画蛇
+		function sinit(x,y,len)
+		{
+			x=parseInt(x);
+			y=parseInt(y);
+			var snake=snakeinith(x,y);
+			x=x-10;
+					for(var i=1;i<len;i++)
+					{
+						var snake=snakeinit(x,y);
+						snakes.push(snake);	
+						x=x-10;
+					}	
+				}
+		function makesnake(x,y,length,speed)
+		{
+				this.x=x;
+				this.y=y;
+				this.len=length;
+				this.dir='R';
+				this.snakex=x;
+				this.snakey=y;
+				var head; //蛇头
+				var last;//蛇尾
+				var odir;
+				sinit(snakex,snakey,len);
+				
+				document.onkeydown=function movedir(e) 
+				{
+					odir=dir;
+					var code=0;
+					var e=e||event;
+					code=e.keyCode||e.which||e.charCode;    
+					  switch(code)
+					  {
+						 case 37:
+						   dir="L";
+						   break;
+						 case 38:
+						   dir="U";
+						   break;
+						 case 39:
+						   dir="R";
+							break;
+						 case 40:
+						   dir="D";
+						   break;
+					 }        
+				 }
+				 
+				 //移动蛇
+	         function m()
+		   {
+			 	
+				 if(snakes[0].x+10>canvas.width+5||snakes[0].x<0||snakes[0].y<0||snakes[0].y+10>canvas.height+5)
+				 {
+					over();	
+					return; 
+					//游戏结束 
+				 }
+				 else
+				 {
+					
+					if(dir=='R')
+					{
+                   		head=snakeinith(snakes[0].x+10,snakes[0].y);
+						snakeinit(snakes[0].x,snakes[0].y);
+                    }
+					else if(dir=='L')
+					{
+                    	head=snakeinith(snakes[0].x-10,snakes[0].y);
+						snakeinit(snakes[0].x,snakes[0].y); 
+                 	}
+					else if(dir=='D')
+					{
+                    	head=snakeinith(snakes[0].x,snakes[0].y+10);
+						snakeinit(snakes[0].x,snakes[0].y);
+                	 }
+					 else if(dir=='U')
+					 {
+                    	head=snakeinith(snakes[0].x,snakes[0].y-10);
+						snakeinit(snakes[0].x,snakes[0].y);  
+                	 }
+					 if(snakes[1].x==head.x&&snakes[1].y==head.y)
+					 {
+						 
+						 dir=odir;
+					
+						 if(dir=='R')
+							{
+								head=snakeinith(snakes[0].x+10,snakes[0].y);
+							}
+						else if(dir=='L')
+							{
+								head=snakeinith(snakes[0].x-10,snakes[0].y); 
+							}
+						else if(dir=='D')
+							{
+								head=snakeinith(snakes[0].x,snakes[0].y+10);
+							 }
+						 else if(dir=='U')
+							 {
+								head=snakeinith(snakes[0].x,snakes[0].y-10);  
+							 }
+						}
+						 snakes.unshift(head);
+						  last=snakes[len];
+						 clear(last.x,last.y);
+						  snakes.pop();
+							
+					  
+				 }
+				  //判断食物是否和蛇头相撞
+				 for (var i = 0;i<foods.length; i++)
+				  {
+					  
+					if(foods[i].x == snakes[0].x&&foods[i].y == snakes[0].y)
+					{
+						foods.pop();
+						 makefood();
+						 
+						 var tail=snakeinit(last.x,last.y);
+						 snakes.push(tail);
+						 len++;
+						 clearInterval(snake_interval);	
+						 if(speed>20)
+						 {
+							 speed=speed-8;
+							 snake_interval=setInterval(m,speed);
+						 }
+					 //
+				   }         
+				 }
+				 for(var i=2;i<snakes.length;i++)
+				 {
+					if(snakes[0].x==snakes[i].x&&snakes[0].y==snakes[i].y)
+					{
+						alert("撞到自己了！");
+					}	
+				}
+		   }
+		    snake_interval=setInterval(m,speed);
+
+	 }
+			//生成地图
+		function map()
+		{
+			ctx.fillStyle='#000000';
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			} 
+		//生成食物
+		function makefood()
+		{
+			var x=parseInt(canvas.width/10*Math.random())*10;
+			var y=parseInt(canvas.height/10*Math.random())*10;
+			var food=new foodinit(x,y);
+			foods.push(food);
+		}
+		//清除
+		function clear(x,y)
+		{
+			ctx.fillStyle='#000000';
+			ctx.strokeStyle='#000000';
+			ctx.strokeRect(x,y,10,10);
+			ctx.fillRect(x,y,10,10);
+		}
+		function star()
+		{	
+			foods=new Array();
+		 	snakes=new Array();
+			map();	
+			document.getElementById("star").setAttribute('style',"display:none;");
+			document.getElementById("restar").setAttribute('style',"display:block;");
+			document.onkeydown=function movedir(e) 
+				{
+					var code=0;
+					var e=e||event;
+					code=e.keyCode||e.which||e.charCode;    
+					 if(code!=0)
+					 {
+						makefood ();
+						var x=(40/canvas.width)*canvas.width;
+						makesnake(x,x,3,100);
+					}
+					     
+				 } 
+		}
+		function over()
+		{
+			clearInterval(snake_interval);	
+			alert("游戏结束！");
+		}
+		function restar()
+		{
+			clearInterval(snake_interval);
+			foods=new Array();
+		 	snakes=new Array();
+			map();	
+			//document.getElementById("star").setAttribute('style',"display:none;");
+			document.onkeydown=function movedir(e) 
+				{
+					var code=0;
+					var e=e||event;
+					code=e.keyCode||e.which||e.charCode;    
+					 if(code!=0)
+					 {
+						makefood ();
+						var x=(40/canvas.width)*canvas.width;
+						makesnake(x,x,3,100);
+					}
+					     
+				 } 	
+		}
+</script>
+<div id="star" style="display:block;">
+ <button type="button"  onClick="star();">开始游戏</button>
+</div>
+<div id="restar" style="display:none;">
+	 <button type="button"  onClick="restar();">重新开始</button>
+</div>
+ </body>
+ 
+ </html>
